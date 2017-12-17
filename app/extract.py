@@ -5,79 +5,57 @@ import requests
 import csv
 import re
 
+class Pet():
+
+    def __init__(self, name=None, description=None):
+        self.init_details(description)
+        
+    def init_details(self, description):
+        
+        #TODO: description -> details
+         
+        self.name = 'some name'
+        self.breed = 'some breed'
+        self.sex = 'some sex'
+        self.date_of_birth = 'some date of birth'
+        self.accepted_on = 'some accepted on'
+        self.pet_id = 'some pet id'
+        
+    def serialize(self):
+        return self.__dict__
+               
 class Extraction():
 
-    def has_class(self,tag):
-        return tag.has_attr('class')
-
-
-    def get_info_dict(self,url):
-        
+    def go_to(self, url):
         r = requests.get(url)
         r.encoding = 'utf-8'
         data = r.text
-
-        soup = BeautifulSoup(data, "html.parser")
-
-        info_dict = {'url' : '',
-                     'title' : '',
-                     'author' : '',
-                     'description' : '',
-                     'charset' : '',
-                     'lang' : ''
-        }
-
+        return BeautifulSoup(data, "html.parser")
         
-        info_dict['url']= url
+    def extract(self,url):
+        url_base='http://'+url if not url[:4].lower() == 'http' else url
+        url = url_base
         
-        title_object = soup.find("title")
-        if title_object is not None:
-            info_dict['title'] = title_object.string.encode('utf-8')
+        soup = self.go_to(url)
         
-       
-        author_object = soup.find("meta",{"name" : "author"})
-        if author_object is not None:
-            info_dict['author'] = author_object['content'].encode('utf-8')
-       
         
-        description_object = soup.find("meta",{"name" : "description"})
-        if description_object is not None:
-            info_dict['description'] = description_object['content'].encode('utf-8')
-       
-               
-        charset_object = soup.find("meta", charset = re.compile('\d'))
-        if charset_object is not None:
-            info_dict['charset'] = charset_object['charset'].encode('utf-8')
-       
+        li = soup.find('li', class_='item17')
+        url = url_base+li.find('a')['href']
         
-        lang_object = soup.find("html", lang = re.compile('\d'))
-        if lang_object is not None:
-            info_dict['lang'] = lang_object['lang'].encode('utf-8')
+        soup = self.go_to(url)
         
-       
-        return info_dict
-
-
-    def run(self,urls):
-
-        urls = [ url.strip() for url in urls.strip().splitlines() if url]
-        
-        print(urls)
-        with open('app/static/sites_metadata.csv', 'w') as csvfile:
-            fieldnames = ['url', 'title', 'author', 'description', 'charset', 'lang']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, dialect='excel')
-            writer.writeheader()
+        pets = list()
+        for name in soup.find_all('td', class_='djcat_product'):
+            description = name.parent.find('td', class_='djcat_intro')
             
-            
-            for url in urls:
-                url='http://'+url if not url[:4].lower() == 'http' else url
-                
-                row = self.get_info_dict(url)
-                print("ROW: ",row)
-                writer.writerow(row)
-            
-            
-        print("Data extraction successful.")
-
-
-    
+            if 'Nazwa' in name.getText() and 'Opis' in description.getText():
+                continue                
+              
+            pets.append(
+                Pet(
+                    name.getText(),
+                    description.getText()
+                    )
+                    .serialize()
+            )
+        return pets
