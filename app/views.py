@@ -9,9 +9,10 @@ from flask import send_file
 from flask import jsonify
 
 
-@app.route('/todo/api/v1.0/pets', methods=['GET'])
+@app.route('/schronisko-zwierzaki.lublin.pl', methods=['GET'])
 def get_tasks():
         
     extraction = Extraction()
     pets = extraction.extract("http://www.schronisko-zwierzaki.lublin.pl")
-    return jsonify({'pets': pets})
+    return jsonify({'Pets': pets})
+
