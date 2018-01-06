@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from bs4 import BeautifulSoup
 import requests
-import csv
-import re
+from bs4 import BeautifulSoup
+
 
 class Pet():
 

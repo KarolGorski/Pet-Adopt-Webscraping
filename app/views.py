@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, flash, redirect
-from app import app
-from .forms import *
-from .extract import Extraction
-from flask import request
-from flask import send_file
 from flask import jsonify
 
+from app import app
+from .extract import Extraction
 
-@app.route('/todo/api/v1.0/pets', methods=['GET'])
+@app.route('/', methods=['GET'])
+@app.route('/api/v1.0/pets', methods=['GET'])
 def get_tasks():
         
     extraction = Extraction()
