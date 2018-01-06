@@ -28,23 +28,23 @@ class Pet():
                    'Data przyjęcia:',
                    'Nr ewidencyjny:'}
 
-        what_is_what_here = {
-            'breed': {'polish_word': 'Rasa:', 'num1': -1, 'num2': 5},
-            'sex': {'polish_word': 'Płeć:', 'num1': -1, 'num2': 5},
-            'size': {'polish_word': 'Wielkość:', 'num1': -1, 'num2': 9},
-            'dateOfBirth': {'polish_word': 'urodzenia:', 'num1': -1, 'num2': 10},
-            'dateOfArrival': {'polish_word': 'Data przyjęcia:', 'num1': -1, 'num2': 15}
+        attributes = {
+            'breed': 'Rasa:',
+            'sex': 'Płeć:',
+            'size': 'Wielkość:',
+            'dateOfBirth': 'urodzenia:',
+            'dateOfArrival': 'Data przyjęcia:'
         }
 
-        for key, value in what_is_what_here.items():
-            if all_info_about_pet.find(value['polish_word']) != value['num1']:
+        for english_word, polish_word in attributes.items():
+            if all_info_about_pet.find(polish_word) != -1:
                 min = 1000000000
-                start = all_info_about_pet.find('polish_word') + value['num2']
+                start = all_info_about_pet.find(polish_word) + len(polish_word)
                 for dne in endings:
                     if len(all_info_about_pet[start: all_info_about_pet.find(dne, start)].strip()) < min:
                         min = len(all_info_about_pet[start: all_info_about_pet.find(dne, start)].strip())
                         end = all_info_about_pet.find(dne, start)
-                        self.__dict__[key] = all_info_about_pet[start: end].strip()
+                        self.__dict__[english_word] = all_info_about_pet[start: end].strip()
 
     def serialize(self):
         return self.__dict__
