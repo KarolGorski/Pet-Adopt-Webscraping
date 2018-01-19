@@ -5,14 +5,14 @@ import requests
 
 
 class Pet():
-    def __init__(self, name=None, all_info_about_pet=None):
+    def __init__(self, name, all_info_about_pet, species, shelter):
         self.name = 'default name'
         self.dateOfBirth = 'default date of birth'
         self.dateOfArrival = 'default date of arrival in shelter'
-        self.species = 'default species'
+        self.species = species
         self.breed = 'default breed'
         self.size = 'default size'
-        self.shelter = 'default shelter'
+        self.shelter = shelter
         self.description = 'default description'
 
         self.init_details(name, all_info_about_pet)
@@ -83,7 +83,9 @@ class Extraction():
             cats.append(
                 Pet(
                     name.getText().replace("\n", ""),
-                    all_info_about_pet.getText()
+                    all_info_about_pet.getText(),
+                    'kot',
+                    'schronisko-zwierzaki.lublin.pl'
                 )
                     .serialize()
             )
@@ -108,7 +110,9 @@ class Extraction():
             dogs.append(
                 Pet(
                     name.getText().replace("\n", ""),
-                    all_info_about_pet.getText()
+                    all_info_about_pet.getText(),
+                    'pies',
+                    'schronisko-zwierzaki.lublin.pl'
                 )
                     .serialize()
             )
