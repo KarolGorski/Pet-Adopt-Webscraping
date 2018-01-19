@@ -5,15 +5,16 @@ import requests
 
 
 class Pet():
-    def __init__(self, name, all_info_about_pet, species, shelter):
+    def __init__(self, name, all_info_about_pet, species, shelter, picture_url, description):
         self.name = 'default name'
         self.dateOfBirth = 'default date of birth'
         self.dateOfArrival = 'default date of arrival in shelter'
         self.species = species
         self.breed = 'default breed'
-        self.size = 'default size'
+        self.size = ''
         self.shelter = shelter
-        self.description = 'default description'
+        self.description = description
+        self.pictureUrl = picture_url
 
         self.init_details(name, all_info_about_pet)
 
@@ -66,57 +67,41 @@ class Extraction():
 
         soup = self.go_to(url)
 
-        # KOTY
-        li = soup.find('li', class_='item17')
-        url = url_base + li.find('a')['href']
+        catsAndDogs = {'kot': 'item17', 'pies': 'item7'}
 
-        soup = self.go_to(url)
+        for catOrDog, css_class in catsAndDogs.items():
 
-        cats = list()
+            li = soup.find('li', class_=css_class)
+            url = url_base + li.find('a')['href']
 
-        for name in soup.find_all('td', class_='djcat_product'):
-            all_info_about_pet = name.parent.find('td', class_='djcat_intro')
+            # open cats/dogs page
+            soup = self.go_to(url)
 
-            if 'Nazwa' in name.getText() and 'Opis' in all_info_about_pet.getText():
-                continue
+            pets = list()
 
-            cats.append(
-                Pet(
-                    name.getText().replace("\n", ""),
-                    all_info_about_pet.getText(),
-                    'kot',
-                    'schronisko-zwierzaki.lublin.pl'
+            for name in soup.find_all('td', class_='djcat_product'):
+                all_info_about_pet = name.parent.find('td', class_='djcat_intro')
+                if 'Nazwa' in name.getText() and 'Opis' in all_info_about_pet.getText():
+                    continue
+
+                picture_box = name.parent.find('td', class_='djcat_picture')
+                picture_url = picture_box.find('a')['href']
+
+                site2 = self.go_to(url_base + name.find('a')['href'])
+                description = site2.find('div', class_='article-inside').getText().strip()
+
+                pets.append(
+                    Pet(
+                        name.getText().replace("\n", ""),
+                        all_info_about_pet.getText(),
+                        catOrDog,
+                        'schronisko-zwierzaki.lublin.pl',
+                        picture_url,
+                        description
+                    )
+                        .serialize()
                 )
-                    .serialize()
-            )
 
-        petsToReturn.append(cats)
-
-        # PSY
-        soup = self.go_to(url_base);
-
-        li = soup.find('li', class_='item7')
-        url = url_base + li.find('a')['href']
-
-        soup = self.go_to(url)
-        dogs = list()
-
-        for name in soup.find_all('td', class_='djcat_product'):
-            all_info_about_pet = name.parent.find('td', class_='djcat_intro')
-
-            if 'Nazwa' in name.getText() and 'Opis' in all_info_about_pet.getText():
-                continue
-
-            dogs.append(
-                Pet(
-                    name.getText().replace("\n", ""),
-                    all_info_about_pet.getText(),
-                    'pies',
-                    'schronisko-zwierzaki.lublin.pl'
-                )
-                    .serialize()
-            )
-
-        petsToReturn.append(dogs)
+        petsToReturn.append(pets)
 
         return petsToReturn
