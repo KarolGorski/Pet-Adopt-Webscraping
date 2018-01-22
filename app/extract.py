@@ -102,6 +102,6 @@ class Extraction():
                         .serialize()
                 )
 
-        petsToReturn.append(pets)
+            petsToReturn.append(pets)
 
         return petsToReturn
