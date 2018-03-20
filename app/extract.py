@@ -2,19 +2,24 @@
 
 from bs4 import BeautifulSoup
 import requests
+import datetime
 
 
 class Pet():
-    def __init__(self, name, all_info_about_pet, species, shelter, picture_url, description):
+    def __init__(self, name, all_info_about_pet, species, picture_url, page_url, description):
         self.name = 'default name'
         self.dateOfBirth = 'default date of birth'
+        self.age = 0
         self.dateOfArrival = 'default date of arrival in shelter'
         self.species = species
+        self.sex = 'default sex'
+        self.sterilized = 'false'
         self.breed = 'default breed'
         self.size = ''
-        self.shelter = shelter
+        self.shelterID = 1
         self.description = description
         self.pictureUrl = picture_url
+        self.page_url = page_url
 
         self.init_details(name, all_info_about_pet)
 
@@ -25,6 +30,7 @@ class Pet():
                    'Wielkość',
                    'Rasa:',
                    'Płeć:',
+                   'Sterylizowany:',
                    'Rok urodzenia:',
                    'Data przyjęcia:',
                    'Nr ewidencyjny:'}
@@ -46,6 +52,12 @@ class Pet():
                         min = len(all_info_about_pet[start: all_info_about_pet.find(dne, start)].strip())
                         end = all_info_about_pet.find(dne, start)
                         self.__dict__[english_word] = all_info_about_pet[start: end].strip()
+        if self.sex.__len__()>6:
+            self.sterilized = 'true'
+        else:
+            self.sterilized = 'false'
+
+        self.age = datetime.datetime.now().year - int(self.dateOfBirth) #Mozliwe ze trzeba bedzie to poprawic na sprawdzanie tylko yeara ze stringa!!!!!!!!!!!!!!!
 
     def serialize(self):
         return self.__dict__
@@ -87,17 +99,21 @@ class Extraction():
                 picture_box = name.parent.find('td', class_='djcat_picture')
                 picture_url = picture_box.find('a')['href']
 
-                site2 = self.go_to(url_base + name.find('a')['href'])
+                page_url = url_base+ name.find('a')['href']
+
+                site2 = self.go_to(page_url)
                 description = site2.find('div', class_='article-inside').getText().strip()
+
+
 
                 pets.append(
                     Pet(
                         name.getText().replace("\n", ""),
                         all_info_about_pet.getText(),
                         catOrDog,
-                        'schronisko-zwierzaki.lublin.pl',
                         picture_url,
-                        description
+                        page_url,
+                        description,
                     )
                         .serialize()
                 )
