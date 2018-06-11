@@ -13,9 +13,9 @@ class Pet():
         self.dateOfArrival = 'default date of arrival in shelter'
         self.species = species
         self.sex = 'default sex'
-        self.sterilized = 'false'
+        self.sterilized = False
         self.breed = 'default breed'
-        self.size = ''
+        self.size = 'nieznana'
         self.shelterID = 1
         self.description = description
         self.pictureUrl = picture_url
@@ -53,9 +53,12 @@ class Pet():
                         end = all_info_about_pet.find(dne, start)
                         self.__dict__[english_word] = all_info_about_pet[start: end].strip()
         if self.sex.__len__()>6:
-            self.sterilized = 'true'
+            self.sterilized = True
         else:
-            self.sterilized = 'false'
+            self.sterilized = False
+
+        if self.breed == 'kot europejski':
+            self.breed = 'europejska'
 
         self.age = datetime.datetime.now().year - int(self.dateOfBirth) #Mozliwe ze trzeba bedzie to poprawic na sprawdzanie tylko yeara ze stringa!!!!!!!!!!!!!!!
 
