@@ -60,6 +60,20 @@ class Pet():
         if self.breed == 'kot europejski':
             self.breed = 'europejska'
 
+        if 'samica' in self.sex:
+            self.sex = 'samica'
+        else:
+            self.sex = 'samiec'
+
+        if 'du' in self.size:
+            self.size = 'duża'
+
+        if 'redn' in self.size:
+            self.size = 'średnia'
+
+        if 'ma' in self.size:
+            self.size = 'mała'
+
         self.age = datetime.datetime.now().year - int(self.dateOfBirth) #Mozliwe ze trzeba bedzie to poprawic na sprawdzanie tylko yeara ze stringa!!!!!!!!!!!!!!!
 
     def serialize(self):
